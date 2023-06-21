@@ -1,0 +1,39 @@
+service: ur-property-monitor
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 128
+  region: ap-northeast-1
+  environment:
+    UR_PROPERTY_MONITOR_NOTIFICATIONS_EMAIL_LIST: ${ssm:UR_PROPERTY_MONITOR_NOTIFICATIONS_EMAIL_LIST}
+    UR_PROPERTY_MONITOR_NOTIFICATIONS_SENDER_EMAIL: ${ssm:UR_PROPERTY_MONITOR_NOTIFICATIONS_SENDER_EMAIL}
+    CACHE_BUCKET: ur-property-monitor-cache-bucket
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:ListBucket"
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:DeleteObject"
+      Resource:
+        - arn:aws:s3:::ur-property-monitor-cache-bucket/*
+    - Effect: Allow
+      Action:
+        - sns:Publish
+        - ses:SendEmail
+      Resource: "*"
+
+functions:
+  rateHandler:
+    handler: index.run
+    events:
+      - schedule: "cron(0/5 * * * ? *)"
+resources:
+  Resources:
+    CacheBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ur-property-monitor-cache-bucket
+
