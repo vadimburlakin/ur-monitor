@@ -1,0 +1,5 @@
+node_modules
+.git
+.serverless
+k8s
+.DS_Store
