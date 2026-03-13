@@ -153,7 +153,7 @@
 
     async function showDashboard() {
       $('login-screen').style.display = 'none';
-      $('dashboard').style.display = '';
+      $('dashboard').style.display = 'block';
       $('user-label').textContent = currentUser.id;
       $('webhook-input').value = currentUser.webhook_url || '';
       $('interval-select').value = currentUser.polling_interval || 5;
